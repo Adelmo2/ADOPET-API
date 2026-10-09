@@ -44,12 +44,8 @@ public class AdocaoService {
         //Chamar as validações
         validacoes.forEach(v -> v.validar(dto));
 
-        Adocao adocao = new Adocao();
-        adocao.setData(LocalDateTime.now());
-        adocao.setStatus(StatusAdocao.AGUARDANDO_AVALIACAO);
-        adocao.setPet(pet);
-        adocao.setTutor(tutor);
-        adocao.setMotivo(dto.motivo());
+        Adocao adocao = new Adocao(tutor, pet, dto.motivo());
+
         repository.save(adocao);
 
         emailService.enviarEmail(
@@ -60,8 +56,8 @@ public class AdocaoService {
 
     public void aprovar(AprovacaoAdocaoDto dto) {
         Adocao adocao = repository.getReferenceById(dto.idAdocao());
-        adocao.setStatus(StatusAdocao.APROVADO);
-        //repository.save(adocao); //Não é necessário essa linha porque JPA já entende que a tabela será salva quando setados os valores nesse momento.
+
+        adocao.marcarComoAprovada();
 
         emailService.enviarEmail(
                 adocao.getPet().getAbrigo().getEmail(),
@@ -71,9 +67,8 @@ public class AdocaoService {
 
     public void reprovar(ReprovacaoAdocaoDto dto) {
         Adocao adocao = repository.getReferenceById(dto.idAdocao());
-        adocao.setStatus(StatusAdocao.REPROVADO);
-        adocao.setJustificativaStatus(dto.justificativa());
-        //repository.save(adocao); //Não é necessário essa linha porque JPA já entende que a tabela será salva quando setados os valores nesse momento.
+
+        adocao.marcarComoReprovada(dto.justificativa());
 
         emailService.enviarEmail(
                 adocao.getPet().getAbrigo().getEmail(),

@@ -1,5 +1,6 @@
 package br.com.alura.adopet.api.controller;
 
+import br.com.alura.adopet.api.dto.CadastroAbrigoDto;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.repository.AbrigoRepository;
@@ -26,6 +27,7 @@ public class AbrigoController {
 
     @PostMapping
     @Transactional
+    //public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroAbrigoDto dto) {
     public ResponseEntity<String> cadastrar(@RequestBody @Valid Abrigo abrigo) {
         boolean nomeJaCadastrado = repository.existsByNome(abrigo.getNome());
         boolean telefoneJaCadastrado = repository.existsByTelefone(abrigo.getTelefone());

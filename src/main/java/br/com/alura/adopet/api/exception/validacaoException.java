@@ -1,7 +1,7 @@
 package br.com.alura.adopet.api.exception;
 
-public class validacaoException extends RuntimeException {
-    public validacaoException(String message) {
+public class ValidacaoException extends RuntimeException {
+    public ValidacaoException(String message) {
         super(message);
     }
 }

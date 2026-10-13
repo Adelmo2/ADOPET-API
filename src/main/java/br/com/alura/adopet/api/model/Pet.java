@@ -36,6 +36,8 @@ public class Pet {
     @OneToOne(mappedBy = "pet", fetch = FetchType.LAZY)
     private Adocao adocao;
 
+    public Pet(){}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

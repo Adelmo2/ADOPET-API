@@ -4,8 +4,10 @@ import br.com.alura.adopet.api.dto.CadastroAbrigoDto;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.repository.AbrigoRepository;
+import br.com.alura.adopet.api.service.AbrigoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,26 +20,24 @@ import java.util.List;
 public class AbrigoController {
 
     @Autowired
-    private AbrigoRepository repository;
+    private AbrigoService abrigoService;
+
+    @Autowired
+    private AbrigoRepository abrigoRepository;
 
     @GetMapping
     public ResponseEntity<List<Abrigo>> listar() {
-        return ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(abrigoRepository.findAll());
     }
 
     @PostMapping
     @Transactional
-    //public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroAbrigoDto dto) {
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid Abrigo abrigo) {
-        boolean nomeJaCadastrado = repository.existsByNome(abrigo.getNome());
-        boolean telefoneJaCadastrado = repository.existsByTelefone(abrigo.getTelefone());
-        boolean emailJaCadastrado = repository.existsByEmail(abrigo.getEmail());
-
-        if (nomeJaCadastrado || telefoneJaCadastrado || emailJaCadastrado) {
-            return ResponseEntity.badRequest().body("Dados já cadastrados para outro abrigo!");
-        } else {
-            repository.save(abrigo);
+    public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroAbrigoDto dto) {
+        try {
+            abrigoService.cadastrar(dto);
             return ResponseEntity.ok().build();
+        } catch (ValidationException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
 

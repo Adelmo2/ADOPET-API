@@ -1,9 +1,12 @@
 package br.com.alura.adopet.api.model;
 
+import br.com.alura.adopet.api.dto.CadastroAbrigoDto;
+import br.com.alura.adopet.api.dto.CadastroTutorDto;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
@@ -35,6 +38,14 @@ public class Abrigo {
     @OneToMany(mappedBy = "abrigo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference("abrigo_pets")
     private List<Pet> pets;
+
+    public Abrigo(){};
+
+    public Abrigo(CadastroAbrigoDto dto) {
+        this.nome = dto.nome();
+        this.telefone = dto.telefone();
+        this.email = dto.email();
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -25,17 +25,17 @@ public class AbrigoService {
     @Autowired
     private PetRepository petRepository;
 
-    public void cadastrar(CadastroAbrigoDto dto) {
-        boolean nomeJaCadastrado = abrigoRepository.existsByNome(dto.nome());
-        boolean telefoneJaCadastrado = abrigoRepository.existsByTelefone(dto.telefone());
-        boolean emailJaCadastrado = abrigoRepository.existsByEmail(dto.email());
-
-        if (nomeJaCadastrado || telefoneJaCadastrado || emailJaCadastrado) {
-            throw new ValidacaoException("Dados já cadastrados para outro abrigo!");
-        } else {
-            abrigoRepository.save(new Abrigo(dto));
-        }
-    }
+//    public void cadastrar(CadastroAbrigoDto dto) {
+//        boolean nomeJaCadastrado = abrigoRepository.existsByNome(dto.nome());
+//        boolean telefoneJaCadastrado = abrigoRepository.existsByTelefone(dto.telefone());
+//        boolean emailJaCadastrado = abrigoRepository.existsByEmail(dto.email());
+//
+//        if (nomeJaCadastrado || telefoneJaCadastrado || emailJaCadastrado) {
+//            throw new ValidacaoException("Dados já cadastrados para outro abrigo!");
+//        } else {
+//            abrigoRepository.save(new Abrigo(dto));
+//        }
+//    }
 
 //    public List<Pet> listaPets(String idOuNome) {
 //        long id = Long.parseLong(idOuNome);
@@ -70,6 +70,14 @@ public class AbrigoService {
         return lista;
     }
 
+    public void cadastrar(CadastroAbrigoDto dto) {
+        boolean jaCadastrado = abrigoRepository.existsByNomeOrTelefoneOrEmail(dto.nome(), dto.telefone(), dto.email());
+        if (jaCadastrado) {
+            throw new ValidacaoException("Dados já cadastrados para outro abrigo!");
+        }
+        abrigoRepository.save(new Abrigo(dto));
+    }
+
     public List<PetDto> listarPetsAbrigo(String idOutNome) {
         Abrigo abrigo = carregarAbrigo(idOutNome);
 
@@ -80,7 +88,7 @@ public class AbrigoService {
                 .toList();
     }
 
-    private Abrigo carregarAbrigo(String idOutNome) {
+    public Abrigo carregarAbrigo(String idOutNome) {
         Optional<Abrigo> optional;
         try {
             Long id = Long.parseLong(idOutNome);
